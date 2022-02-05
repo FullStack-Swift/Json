@@ -14,8 +14,13 @@ let string = json.toString()
 let dictionary = json.toDictionary()
 let model = json.toModel(Model.self)
 ```
+
+
+# Installation
+
+## Swift Package Manager
 ```swift
 dependencies: [
-    .package(url: "https://github.com/FullStack-Swift/Networking", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/FullStack-Swift/Json", .upToNextMajor(from: "1.0.0"))
 ]
 ```
