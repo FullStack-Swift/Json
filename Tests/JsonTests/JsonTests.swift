@@ -52,21 +52,5 @@
             XCTAssertEqual(json1, Json(array1.append(value: dict1)))
             XCTAssertEqual(json1, Json([1,2, ["one": 1, "two": 2]]))
             XCTAssertEqual(json1, json2)
-            
-//            let json3 = Json {
-//                
-//                ArrayBuilder {
-//                    ArrayItemBuilder(1)
-//                    ArrayItemBuilder(2)
-//                }
-//                
-//                DictionaryBuilder {
-//                    DictionaryItemBuilder(key: "one", value: 1)
-//                    DictionaryItemBuilder(key: "two", value: 2)
-//                }
-//            }
-            
-            
-            
         }
     }

@@ -15,39 +15,37 @@ public struct Json {
   public var object: Any {
     get {
       switch type {
-      case .array:      return rawArray
-      case .dictionary: return rawDictionary
-      case .string:     return rawString
-      case .number:     return rawNumber
-      case .bool:       return rawBool
-      default:          return rawNull
+        case .array:      return rawArray
+        case .dictionary: return rawDictionary
+        case .string:     return rawString
+        case .number:     return rawNumber
+        case .bool:       return rawBool
+        default:          return rawNull
       }
     }
     set {
       switch unwrap(newValue) {
-      case let number as NSNumber:
-        if number.isBool {
-          type = .bool
-          rawBool = number.boolValue
-        } else {
-          type = .number
-          rawNumber = number
-        }
-      case let string as String:
-        type = .string
-        rawString = string
-      case _ as NSNull:
-        type = .null
-      case nil:
-        type = .null
-      case let array as [Any]:
-        type = .array
-        rawArray = array
-      case let dictionary as [String: Any]:
-        type = .dictionary
-        rawDictionary = dictionary
-      default:
-        type = .unknown
+        case let number as NSNumber:
+          if number.isBool {
+            type = .bool
+            rawBool = number.boolValue
+          } else {
+            type = .number
+            rawNumber = number
+          }
+        case let string as String:
+          type = .string
+          rawString = string
+        case _ as NSNull:
+          type = .null
+        case let array as [Any]:
+          type = .array
+          rawArray = array
+        case let dictionary as [String: Any]:
+          type = .dictionary
+          rawDictionary = dictionary
+        default:
+          type = .unknown
       }
     }
   }
@@ -62,10 +60,10 @@ public struct Json {
   
   public init(_ object: Any) {
     switch object {
-    case let object as Data:
-      self.init(data: object)
-    default:
-      self.init(jsonObject: object)
+      case let object as Data:
+        self.init(data: object)
+      default:
+        self.init(jsonObject: object)
     }
   }
   
@@ -92,24 +90,22 @@ public struct Json {
   fileprivate init(jsonObject: Any) {
     object = jsonObject
   }
-  
 }
 
 extension Json {
-  
   @discardableResult
   public func merge(with other: Json) -> Self {
     var newJson = self
     if type == other.type {
       switch type {
-      case .dictionary:
-        newJson = Json(newJson.rawDictionary.merge(other.rawDictionary, uniquingKeysWith: { dict1, dict2 in
-          dict1
-        }))
-      case .array:
-        newJson = Json(rawArray + other.rawArray)
-      default:
-        break
+        case .dictionary:
+          newJson = Json(newJson.rawDictionary.merge(other.rawDictionary, uniquingKeysWith: { dict1, dict2 in
+            dict1
+          }))
+        case .array:
+          newJson = Json(rawArray + other.rawArray)
+        default:
+          break
       }
     } else {
       if type == .dictionary && other.type == .array {
@@ -122,15 +118,12 @@ extension Json {
     }
     return newJson
   }
-  
 }
 
 extension Json {
-  
   static var null: Json {
     return Json(jsonObject: NSNull.defaultValue)
   }
-  
 }
 
 extension Json {
@@ -138,34 +131,70 @@ extension Json {
     get {
       var json = Self()
       switch key {
-      case .key(let keyString):
-        if let dict = self.object as? [String: Any], let value = dict[keyString] {
-          json.object = value
-        } else {
-          return json
-        }
-      case .index(let indexInt):
-        if let array = self.object as? [Any], let value = array[safe: indexInt] {
-          json.object = value
-        } else {
-          return json
-        }
+        case .key(let keyString):
+          if let dict = self.object as? [String: Any], let value = dict[keyString] {
+            json.object = value
+          } else {
+            return json
+          }
+        case .index(let indexInt):
+          if let array = self.object as? [Any], let value = array[safe: indexInt] {
+            json.object = value
+          } else {
+            return json
+          }
       }
       return json
     }
-    
     set {
       switch key {
-      case .key(let keyString):
-        if var dict = object as? [String: Any] {
-          dict[keyString] = newValue
-          object = dict
-        }
-      case .index(let index):
-        if var array = self.object as? [Any] {
-          array[safe: index] = newValue
-          object = array
-        }
+        case .key(let keyString):
+          if var dict = object as? [String: Any] {
+            dict[keyString] = newValue
+            object = dict
+          }
+        case .index(let index):
+          if var array = self.object as? [Any] {
+            array[safe: index] = newValue
+            object = array
+          }
+      }
+    }
+  }
+  
+  public subscript(_ key: JsonSubscriptType) -> Self {
+    get {
+      let key = key.jsonKey
+      var json = Self()
+      switch key {
+        case .key(let keyString):
+          if let dict = self.object as? [String: Any], let value = dict[keyString] {
+            json.object = value
+          } else {
+            return json
+          }
+        case .index(let indexInt):
+          if let array = self.object as? [Any], let value = array[safe: indexInt] {
+            json.object = value
+          } else {
+            return json
+          }
+      }
+      return json
+    }
+    set {
+      let key = key.jsonKey
+      switch key {
+        case .key(let keyString):
+          if var dict = object as? [String: Any] {
+            dict[keyString] = newValue
+            object = dict
+          }
+        case .index(let index):
+          if var array = self.object as? [Any] {
+            array[safe: index] = newValue
+            object = array
+          }
       }
     }
   }
@@ -174,21 +203,29 @@ extension Json {
     get {
       keys.reduce(self) {$0[$1]}
     }
-    
     set {
       switch keys.count {
-      case 0:
-        return
-      case 1:
-        self[keys.first!] = newValue
-      default:
-        var newKeys = keys
-        newKeys.remove(at: 0)
-        var json = self[keys.first!]
-        json[newKeys] = newValue
-        self[keys.first!] = json
-        
+        case 0:
+          return
+        case 1:
+          self[keys.first!] = newValue
+        default:
+          var newKeys = keys
+          newKeys.remove(at: 0)
+          var json = self[keys.first!]
+          json[newKeys] = newValue
+          self[keys.first!] = json
+          
       }
+    }
+  }
+  
+  public subscript(_ keys: [JsonSubscriptType] = []) -> Self {
+    get {
+      self[keys.map(\.jsonKey)]
+    }
+    set {
+      self[keys.map(\.jsonKey)] = newValue
     }
   }
   
@@ -201,6 +238,15 @@ extension Json {
     }
   }
   
+  public subscript(_ keys: JsonSubscriptType...) -> Self {
+    get {
+      self[keys.map(\.jsonKey)]
+    }
+    set {
+      self[keys.map(\.jsonKey)] = newValue
+    }
+  }
+  
   public subscript(dynamicMember member: String) -> Self {
     get {
       return self[member.jsonKey]
@@ -209,11 +255,9 @@ extension Json {
       self[member.jsonKey] = newValue
     }
   }
-  
 }
 
 extension Json {
-  
   public func downcasting<T>(_ defaultValue: T) -> T {
     downcastingOptional(T.self) ?? defaultValue
   }
@@ -221,45 +265,40 @@ extension Json {
   public func downcastingOptional<T>(_ type: T.Type) -> T? {
     object as? T
   }
-  
 }
 
 extension Json: Equatable {
   public static func == (lhs: Json, rhs: Json) -> Bool {
     if lhs.type == rhs.type {
       switch lhs.type {
-      case .string:
-        return lhs.rawString == rhs.rawString
-      case .number:
-        return lhs.rawNumber == rhs.rawNumber
-      case .bool:
-        return lhs.rawBool == rhs.rawBool
-      case .array:
-        if lhs.rawArray.count != rhs.rawArray.count {
-          return false
-        }
-        for index in 0..<lhs.rawArray.count-1 {
-          if Json(lhs.rawArray[index]) != Json(rhs.rawArray[index]) {
+        case .string:
+          return lhs.rawString == rhs.rawString
+        case .number:
+          return lhs.rawNumber == rhs.rawNumber
+        case .bool:
+          return lhs.rawBool == rhs.rawBool
+        case .array:
+          if lhs.rawArray.count != rhs.rawArray.count {
             return false
           }
+          for index in 0..<lhs.rawArray.count-1 {
+            if Json(lhs.rawArray[index]) != Json(rhs.rawArray[index]) {
+              return false
+            }
+            return true
+          }
+        case .dictionary:
+          return lhs.rawDictionary == rhs.rawDictionary
+        case .null:
           return true
-        }
-        
-      case .dictionary:
-        return lhs.rawDictionary == rhs.rawDictionary
-      case .null:
-        return true
-      case .unknown:
-        return false
+        case .unknown:
+          return false
       }
     } else {
       return false
     }
-    
     return lhs.description == rhs.description
   }
-  
-  
 }
 
 extension Json: Swift.CustomStringConvertible {
@@ -269,36 +308,34 @@ extension Json: Swift.CustomStringConvertible {
 }
 
 extension Json: Swift.CustomDebugStringConvertible {
-  
   public var debugDescription: String {
     description
   }
-  
 }
 
 extension Json {
   
   fileprivate func descriptionPrint() -> String? {
     switch type {
-    case .dictionary:
-      if let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]) {
-        return data.toString()
-      } else {
-        return nil
-      }
-      
-    case .array:
-      if let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]) {
-        return data.toString()
-      } else {
-        return nil
-      }
-      
-    case .string: return rawString
-    case .number: return rawNumber.stringValue
-    case .bool:   return rawBool.description
-    case .null:   return "null"
-    default:      return nil
+      case .dictionary:
+        if let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]) {
+          return data.toString()
+        } else {
+          return nil
+        }
+        
+      case .array:
+        if let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]) {
+          return data.toString()
+        } else {
+          return nil
+        }
+        
+      case .string: return rawString
+      case .number: return rawNumber.stringValue
+      case .bool:   return rawBool.description
+      case .null:   return "null"
+      default:      return nil
     }
   }
 }
@@ -331,9 +368,9 @@ extension Json {
   public var number: NSNumber? {
     get {
       switch type {
-      case .number: return rawNumber
-      case .bool:   return NSNumber(value: rawBool ? 1 : 0)
-      default:      return nil
+        case .number: return rawNumber
+        case .bool:   return NSNumber(value: rawBool ? 1 : 0)
+        default:      return nil
       }
     }
     set {
@@ -344,12 +381,12 @@ extension Json {
   public var numberValue: NSNumber {
     get {
       switch type {
-      case .string:
-        let decimal = NSDecimalNumber(string: object as? String)
-        return decimal == .notANumber ? .zero : decimal
-      case .number: return object as? NSNumber ?? NSNumber(value: 0)
-      case .bool: return NSNumber(value: rawBool ? 1 : 0)
-      default: return NSNumber(value: 0.0)
+        case .string:
+          let decimal = NSDecimalNumber(string: object as? String)
+          return decimal == .notANumber ? .zero : decimal
+        case .number: return object as? NSNumber ?? NSNumber(value: 0)
+        case .bool: return NSNumber(value: rawBool ? 1 : 0)
+        default: return NSNumber(value: 0.0)
       }
     }
     set {
