@@ -14,3 +14,8 @@ let string = json.toString()
 let dictionary = json.toDictionary()
 let model = json.toModel(Model.self)
 ```
+```swift
+dependencies: [
+    .package(url: "https://github.com/FullStack-Swift/Networking", .upToNextMajor(from: "1.0.0"))
+]
+```
