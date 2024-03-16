@@ -1,5 +1,5 @@
 import Foundation
-
+import SwiftExtension
 
 public extension String {
   

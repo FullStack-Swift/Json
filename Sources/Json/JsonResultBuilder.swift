@@ -3,7 +3,7 @@ import Foundation
 @resultBuilder
 public struct JsonResultBuilder {
   public static func buildBlock() -> Json {
-    DictionaryBuilder {
+    DictionaryJson {
       
     }.json
   }
@@ -51,7 +51,7 @@ public struct ArrayResultBuilder {
   }
 }
 
-public struct ArrayBuilder: ConvertJsonProtocol {
+public struct ArrayJson: ConvertJsonProtocol {
   var arrayItemBuilder: [ArrayItemBuilder]
   
   public init(@ArrayResultBuilder builder: @escaping  (() -> [ArrayItemBuilder])) {
@@ -63,8 +63,8 @@ public struct ArrayBuilder: ConvertJsonProtocol {
   }
 }
 
-extension ArrayBuilder: Equatable {
-  public static func == (lhs: ArrayBuilder, rhs: ArrayBuilder) -> Bool {
+extension ArrayJson: Equatable {
+  public static func == (lhs: ArrayJson, rhs: ArrayJson) -> Bool {
     return lhs.json == rhs.json
   }
 }
@@ -86,7 +86,7 @@ public struct DictionaryResultBuilder {
   }
 }
 
-public struct DictionaryBuilder: ConvertJsonProtocol {
+public struct DictionaryJson: ConvertJsonProtocol {
   var dictionariesItemBuilder: [DictionaryItemBuilder]
   
   public init(@DictionaryResultBuilder builder: @escaping  (() -> [DictionaryItemBuilder])) {
@@ -102,8 +102,8 @@ public struct DictionaryBuilder: ConvertJsonProtocol {
   }
 }
 
-extension DictionaryBuilder: Equatable {
-  public static func == (lhs: DictionaryBuilder, rhs: DictionaryBuilder) -> Bool {
+extension DictionaryJson: Equatable {
+  public static func == (lhs: DictionaryJson, rhs: DictionaryJson) -> Bool {
     return lhs.json == rhs.json
   }
 }

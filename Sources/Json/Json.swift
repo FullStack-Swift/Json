@@ -3,12 +3,12 @@ import Foundation
 @dynamicMemberLookup
 public struct Json {
   
-  fileprivate var rawArray: [Any] = Array.defaultValue
-  fileprivate var rawDictionary: [String: Any] = Dictionary.defaultValue
-  fileprivate var rawString: String = String.defaultValue
-  fileprivate var rawNumber: NSNumber = NSNumber.defaultValue
-  fileprivate var rawNull: NSNull = NSNull.defaultValue
-  fileprivate var rawBool: Bool = Bool.defaultValue
+  fileprivate var rawArray: [Any] = []
+  fileprivate var rawDictionary: [String: Any] = [:]
+  fileprivate var rawString: String = ""
+  fileprivate var rawNumber: NSNumber = 0
+  fileprivate var rawNull: NSNull = NSNull()
+  fileprivate var rawBool: Bool = false
   
   public fileprivate(set) var type: TypeJson = .null
   
@@ -75,7 +75,7 @@ public struct Json {
     if let object: Any = try? JSONSerialization.jsonObject(with: data, options: options) {
       self.init(jsonObject: object)
     } else {
-      self.init(jsonObject: NSNull.defaultValue)
+      self.init(jsonObject: NSNull())
     }
   }
   
@@ -83,7 +83,7 @@ public struct Json {
     if let data = jsonString.toData() {
       self.init(data: data)
     } else {
-      self.init(jsonObject: NSNull.defaultValue)
+      self.init(jsonObject: NSNull())
     }
   }
   
@@ -109,11 +109,11 @@ extension Json {
       }
     } else {
       if type == .dictionary && other.type == .array {
-        newJson = Json((other.object as? [Any])?.append(value: object) as Any)
+        newJson = Json((other.object as? [Any])?.appending(value: object) as Any)
       }
       
       if type == .array && other.type == .dictionary {
-        newJson = Json((object as? [Any])?.append(value: other.object) as Any)
+        newJson = Json((object as? [Any])?.appending(value: other.object) as Any)
       }
     }
     return newJson
@@ -122,7 +122,7 @@ extension Json {
 
 extension Json {
   static var null: Json {
-    return Json(jsonObject: NSNull.defaultValue)
+    return Json(jsonObject: NSNull())
   }
 }
 
@@ -321,22 +321,37 @@ extension Json {
         if let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]) {
           return data.toString()
         } else {
-          return nil
+          return rawDictionary.description
         }
         
       case .array:
         if let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]) {
           return data.toString()
         } else {
-          return nil
+          return rawArray.description
         }
         
-      case .string: return rawString
-      case .number: return rawNumber.stringValue
-      case .bool:   return rawBool.description
-      case .null:   return "null"
-      default:      return nil
+      case .string:
+        if JSONSerialization.isValidJSONObject(rawString),
+           let data = try? JSONSerialization.data(withJSONObject: rawString, options: [.prettyPrinted]) {
+          return data.toString()
+        } else {
+          return rawString.description
+        }
+        
+      case .number:
+        return rawNumber.description
+        
+      case .bool:
+        return rawBool.description
+        
+      case .null:
+        return rawNull.description
+        
+      default:
+        break
     }
+    return nil
   }
 }
 

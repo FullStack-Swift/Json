@@ -36,6 +36,33 @@
           "revision": "bd86ca0141e3cfb333546de5a11ede63f0c4a0e6",
           "version": "4.0.0"
         }
+      },
+      {
+        "package": "swift-collections",
+        "repositoryURL": "https://github.com/apple/swift-collections",
+        "state": {
+          "branch": null,
+          "revision": "94cf62b3ba8d4bed62680a282d4c25f9c63c2efb",
+          "version": "1.1.0"
+        }
+      },
+      {
+        "package": "swift-extension",
+        "repositoryURL": "https://github.com/FullStack-Swift/swift-extension",
+        "state": {
+          "branch": "main",
+          "revision": "4d03ba06e5ef33e08abcf4668bded09e99c69471",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-identified-collections",
+        "repositoryURL": "https://github.com/pointfreeco/swift-identified-collections",
+        "state": {
+          "branch": null,
+          "revision": "d1e45f3e1eee2c9193f5369fa9d70a6ddad635e8",
+          "version": "1.0.0"
+        }
       }
     ]
   },
